@@ -1,6 +1,7 @@
 import { FC, memo } from 'react';
 import { Category } from '../../../types';
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -38,9 +39,9 @@ const CategoriesListItem: FC<Props> = ({ category }) => {
 
   return (
     category && (
-      <Card>
-        <Grid container>
-          <Grid size={10}>
+      <Card sx={{ px: 1 }} variant='outlined'>
+        <Stack direction='row' justifyContent='space-between'>
+          <Box flex={1}>
             <CardContent>
               <Grid container>
                 <Grid size={10}>
@@ -55,23 +56,21 @@ const CategoriesListItem: FC<Props> = ({ category }) => {
                 </Grid>
               </Grid>
             </CardContent>
-          </Grid>
-          <Grid size={2}>
+          </Box>
+          <Stack direction='row'>
             <CardActions>
-              <Stack direction='column'>
-                <Button onClick={handleEdit}>
-                  <EditIcon />
-                </Button>
-                <LoadingButton
-                  loading={deleteLoading.includes(category.id)}
-                  onClick={handleDelete}
-                >
-                  <DeleteIcon />
-                </LoadingButton>
-              </Stack>
+              <Button onClick={handleEdit}>
+                <EditIcon />
+              </Button>
+              <LoadingButton
+                loading={deleteLoading.includes(category.id)}
+                onClick={handleDelete}
+              >
+                <DeleteIcon />
+              </LoadingButton>
             </CardActions>
-          </Grid>
-        </Grid>
+          </Stack>
+        </Stack>
       </Card>
     )
   );

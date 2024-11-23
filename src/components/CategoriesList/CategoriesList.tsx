@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import TransactionsListItem from './CategoriesListItem/CategoriesListItem';
+import CategoriesListItem from './CategoriesListItem/CategoriesListItem';
 import { useAppSelector } from '../../app/hooks';
 import { Selectors } from '../../store/slices/categoriesSlice';
 
@@ -7,9 +7,9 @@ const TransactionsList = () => {
   const categories = useAppSelector(Selectors.categories);
 
   return (
-    <Stack>
+    <Stack gap={1}>
       {categories.map((x) => (
-        <TransactionsListItem category={x} />
+        <CategoriesListItem key={x.id} category={x} />
       ))}
     </Stack>
   );

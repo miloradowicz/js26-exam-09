@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from 'react-router-dom';
+import Transactions from './containers/Transactions/Transactions';
+import Categories from './containers/Categories/Categories';
+import Layout from './components/Layout/Layout';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { Selectors as selectTransactions } from './store/slices/transactionsSlice';
+import { Selectors as selectCategories } from './store/slices/categoriesSlice';
+import Modal from './components/UI/Modal/Modal';
+import CategoriesForm from './components/CategoriesForm/CategoriesForm';
+import TransactionForm from './components/TransactionForm/TransactionForm';
+import { useEffect } from 'react';
+import { syncAllTransactions } from './store/thunks/transactionsThunks';
+import { syncAllCategories } from './store/thunks/categoriesThunks';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useAppDispatch();
+
+  const transactionsModalOpen = useAppSelector(selectTransactions.modalOpen);
+  const categoriesModalOpen = useAppSelector(selectCategories.modalOpen);
+
+  useEffect(() => {
+    dispatch(syncAllTransactions());
+    dispatch(syncAllCategories());
+  }, [dispatch]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Layout>
+      <Routes>
+        <Route path='/'>
+          <Route index element={<Transactions />} />
+          <Route path='categories' element={<Categories />} />
+        </Route>
+      </Routes>
+      <Modal open={transactionsModalOpen}>
+        <TransactionForm />
+      </Modal>
+      <Modal open={categoriesModalOpen}>
+        <CategoriesForm />
+      </Modal>
+    </Layout>
+  );
 }
 
-export default App
+export default App;

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Transaction } from '../../types';
 import {
   createTransaction,
@@ -7,23 +7,41 @@ import {
   syncTransaction,
   updateTransaction,
 } from '../thunks/transactionsThunks';
+import { RootState } from '../../app/store';
+import dayjs from 'dayjs';
 
 interface State {
   transactions: Transaction[];
   loading: boolean;
   deleteLoading: string[];
+  updateLoading: boolean;
+  modalOpen: boolean;
+  currentId?: string;
 }
 
 const initialState: State = {
   transactions: [],
   loading: false,
   deleteLoading: [],
+  updateLoading: false,
+  modalOpen: false,
 };
 
 const slice = createSlice({
   name: 'app',
   initialState,
-  reducers: {},
+  reducers: {
+    openTransactionModal: (
+      state,
+      { payload }: PayloadAction<string | undefined>
+    ) => {
+      state.currentId = payload;
+      state.modalOpen = true;
+    },
+    closeTransactionModal: (state) => {
+      state.modalOpen = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(syncAllTransactions.pending, (state) => {
@@ -34,6 +52,10 @@ const slice = createSlice({
 
         if (payload) {
           state.transactions = payload;
+          state.transactions.sort(
+            (a, b) =>
+              dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
+          );
         } else {
           state.transactions = [];
         }
@@ -42,17 +64,21 @@ const slice = createSlice({
         state.loading = false;
       })
       .addCase(createTransaction.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
       })
       .addCase(createTransaction.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.updateLoading = false;
 
         if (payload) {
           state.transactions.push(payload);
+          state.transactions.sort(
+            (a, b) =>
+              dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
+          );
         }
       })
       .addCase(createTransaction.rejected, (state) => {
-        state.loading = false;
+        state.updateLoading = false;
       })
       .addCase(syncTransaction.pending, (state) => {
         state.loading = true;
@@ -74,10 +100,10 @@ const slice = createSlice({
         state.loading = false;
       })
       .addCase(updateTransaction.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
       })
       .addCase(updateTransaction.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.updateLoading = false;
 
         if (payload) {
           const i = state.transactions.findIndex((x) => x.id === payload.id);
@@ -90,7 +116,7 @@ const slice = createSlice({
         }
       })
       .addCase(updateTransaction.rejected, (state) => {
-        state.loading = false;
+        state.updateLoading = false;
       })
       .addCase(deleteTransaction.pending, (state, { meta }) => {
         const i = state.deleteLoading.findIndex((x) => x === meta.arg);
@@ -125,3 +151,13 @@ const slice = createSlice({
 });
 
 export const transactionsReducer = slice.reducer;
+export const { openTransactionModal, closeTransactionModal } = slice.actions;
+
+export const Selectors = {
+  transactions: (state: RootState) => state.transactionsReducer.transactions,
+  loading: (state: RootState) => state.transactionsReducer.loading,
+  deleteLoading: (state: RootState) => state.transactionsReducer.deleteLoading,
+  updateLoading: (state: RootState) => state.transactionsReducer.updateLoading,
+  modalOpen: (state: RootState) => state.transactionsReducer.modalOpen,
+  currentId: (state: RootState) => state.transactionsReducer.currentId,
+};

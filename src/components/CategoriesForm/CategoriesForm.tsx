@@ -12,6 +12,7 @@ import {
   Button,
   SelectChangeEvent,
   Stack,
+  Typography,
 } from '@mui/material';
 import {
   createCategory,
@@ -75,7 +76,10 @@ const CategoriesForm = () => {
   };
 
   return (
-    <>
+    <Stack gap={2}>
+      <Typography variant='h5'>
+        {currentId ? 'Edit category' : 'New category'}
+      </Typography>
       <form onSubmit={handleSubmit}>
         <Stack gap={2}>
           <Select
@@ -106,7 +110,7 @@ const CategoriesForm = () => {
         </Stack>
       </form>
       <Button onClick={handleClose}>Close</Button>
-    </>
+    </Stack>
   );
 };
 

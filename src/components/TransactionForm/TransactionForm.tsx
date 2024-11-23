@@ -46,13 +46,17 @@ const TransactionForm = () => {
 
       if (i) {
         const { id: _, ..._data } = { ...i };
-        setData(_data);
+        setData({ ..._data, amount: Math.abs(_data.amount) });
       }
     }
   }, [currentId, transactions]);
 
   const validate = (data: Data) =>
-    !!(data.amount && categories.find((x) => x.id === data.categoryId));
+    !!(
+      Number.isInteger(data.amount) &&
+      data.amount > 0 &&
+      categories.find((x) => x.id === data.categoryId)
+    );
 
   const handleClose = () => {
     dispatch(closeTransactionModal());
@@ -76,11 +80,16 @@ const TransactionForm = () => {
     e.preventDefault();
 
     if (validate(data)) {
+      const c = categories.find((x) => x.id === data.categoryId);
+
       if (currentId) {
         await dispatch(
           updateTransaction({
             id: currentId,
-            transaction: { ...data },
+            transaction: {
+              ...data,
+              amount: c?.type === 'expense' ? -data.amount : data.amount,
+            },
           })
         );
       } else {

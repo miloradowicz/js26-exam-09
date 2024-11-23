@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 import { Category, CategoryBase } from '../../types';
+import { RootState } from '../../app/store';
+import { deleteTransaction } from './transactionsThunks';
 
 export const syncAllCategories = createAsyncThunk(
   'categories/syncAllCategories',
@@ -34,10 +36,16 @@ export const updateCategory = createAsyncThunk(
   }
 );
 
-export const deleteCategory = createAsyncThunk(
-  'app/deleteCategory',
-  async (id: string) => {
-    void (await api.deleteTransaction(id));
-    return (await api.readTransaction(id)) ? null : id;
+export const deleteCategory = createAsyncThunk.withTypes<{
+  state: RootState;
+}>()('app/deleteCategory', async (id: string, thunkAPI) => {
+  const transactions = thunkAPI.getState().transactionsReducer.transactions;
+  if (transactions.some((x) => x.categoryId === id)) {
+    throw new Error(
+      'Cannot delete category. There are transactions in this category. Assigne them to another category first.'
+    );
   }
-);
+
+  void (await api.deleteCategory(id));
+  return (await api.readCategory(id)) ? null : id;
+});

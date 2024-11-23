@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Category } from '../../types';
 import {
   createCategory,
@@ -7,27 +7,46 @@ import {
   syncCategory,
   updateCategory,
 } from '../thunks/categoriesThunks';
+import { RootState } from '../../app/store';
 
 interface State {
   categories: Category[];
   loading: boolean;
+  updateLoading: boolean;
   deleteLoading: string[];
+  modalOpen: boolean;
+  currentId?: string;
+  error?: string;
 }
 
 const initialState: State = {
   categories: [],
   loading: false,
+  updateLoading: false,
   deleteLoading: [],
+  modalOpen: false,
 };
 
-const appSlice = createSlice({
+const slice = createSlice({
   name: 'categories',
   initialState,
-  reducers: {},
+  reducers: {
+    openCategoryModal: (
+      state,
+      { payload }: PayloadAction<string | undefined>
+    ) => {
+      state.currentId = payload;
+      state.modalOpen = true;
+    },
+    closeCategoryModal: (state) => {
+      state.modalOpen = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(syncAllCategories.pending, (state) => {
         state.loading = true;
+        state.error = undefined;
       })
       .addCase(syncAllCategories.fulfilled, (state, { payload }) => {
         state.loading = false;
@@ -38,24 +57,28 @@ const appSlice = createSlice({
           state.categories = [];
         }
       })
-      .addCase(syncAllCategories.rejected, (state) => {
+      .addCase(syncAllCategories.rejected, (state, { error }) => {
         state.loading = false;
+        state.error = error.message;
       })
       .addCase(createCategory.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
+        state.error = undefined;
       })
       .addCase(createCategory.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.updateLoading = false;
 
         if (payload) {
           state.categories.push(payload);
         }
       })
-      .addCase(createCategory.rejected, (state) => {
-        state.loading = false;
+      .addCase(createCategory.rejected, (state, { error }) => {
+        state.updateLoading = false;
+        state.error = error.message;
       })
       .addCase(syncCategory.pending, (state) => {
         state.loading = true;
+        state.error = undefined;
       })
       .addCase(syncCategory.fulfilled, (state, { payload }) => {
         state.loading = false;
@@ -70,14 +93,16 @@ const appSlice = createSlice({
           }
         }
       })
-      .addCase(syncCategory.rejected, (state) => {
+      .addCase(syncCategory.rejected, (state, { error }) => {
         state.loading = false;
+        state.error = error.message;
       })
       .addCase(updateCategory.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
+        state.error = undefined;
       })
       .addCase(updateCategory.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.updateLoading = false;
 
         if (payload) {
           const i = state.categories.findIndex((x) => x.id === payload.id);
@@ -89,10 +114,13 @@ const appSlice = createSlice({
           }
         }
       })
-      .addCase(updateCategory.rejected, (state) => {
-        state.loading = false;
+      .addCase(updateCategory.rejected, (state, { error }) => {
+        state.updateLoading = false;
+        state.error = error.message;
       })
       .addCase(deleteCategory.pending, (state, { meta }) => {
+        state.error = undefined;
+
         const i = state.deleteLoading.findIndex((x) => x === meta.arg);
 
         if (i < 0) {
@@ -114,7 +142,9 @@ const appSlice = createSlice({
           }
         }
       })
-      .addCase(deleteCategory.rejected, (state, { meta }) => {
+      .addCase(deleteCategory.rejected, (state, { error, meta }) => {
+        state.error = error.message;
+
         const i = state.deleteLoading.findIndex((x) => x === meta.arg);
 
         if (i >= 0) {
@@ -124,4 +154,15 @@ const appSlice = createSlice({
   },
 });
 
-export const categoriesReducer = appSlice.reducer;
+export const categoriesReducer = slice.reducer;
+export const { openCategoryModal, closeCategoryModal } = slice.actions;
+
+export const Selectors = {
+  categories: (state: RootState) => state.categoriesReducer.categories,
+  loading: (state: RootState) => state.categoriesReducer.loading,
+  deleteLoading: (state: RootState) => state.categoriesReducer.deleteLoading,
+  updateLoading: (state: RootState) => state.categoriesReducer.updateLoading,
+  modalOpen: (state: RootState) => state.categoriesReducer.modalOpen,
+  currentId: (state: RootState) => state.categoriesReducer.currentId,
+  error: (state: RootState) => state.categoriesReducer.error,
+};

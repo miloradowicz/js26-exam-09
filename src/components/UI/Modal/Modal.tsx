@@ -7,7 +7,7 @@ interface Props {
 
 const UIModal: FC<PropsWithChildren<Props>> = ({ open, children }) => {
   return (
-    <Modal open={open}>
+    <Modal open={open} onClose={}>
       <Box
         sx={{
           display: 'flex',

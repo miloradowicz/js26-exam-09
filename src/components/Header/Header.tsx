@@ -14,11 +14,11 @@ const Header = () => {
           Finance Tracker
         </Typography>
         <Stack color='white' direction='row' gap={3}>
-          <Button color='inherit' onClick={() => navigate('/')}>
-            Transactions
-          </Button>
           <Button color='inherit' onClick={() => navigate('/categories')}>
             Categories
+          </Button>
+          <Button color='inherit' onClick={() => navigate('/')}>
+            Transactions
           </Button>
           <Button
             color='inherit'

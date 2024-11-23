@@ -54,7 +54,7 @@ const CategoriesForm = () => {
   };
 
   const handleChange = (
-    e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const _data = { ...data, [e.target.name]: e.target.value };
     setData(_data);
@@ -82,7 +82,8 @@ const CategoriesForm = () => {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Stack gap={2}>
-          <Select
+          <TextField
+            select
             id='category-type-select'
             name='type'
             value={data.type}
@@ -92,7 +93,7 @@ const CategoriesForm = () => {
           >
             <MenuItem value='expense'>Expense</MenuItem>
             <MenuItem value='income'>Income</MenuItem>
-          </Select>
+          </TextField>
           <TextField
             name='name'
             value={data.name}

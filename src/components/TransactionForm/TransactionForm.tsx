@@ -65,7 +65,7 @@ const TransactionForm = () => {
   };
 
   const handleChange = (
-    e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const _data = {
       ...data,
@@ -117,7 +117,8 @@ const TransactionForm = () => {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Stack gap={2}>
-          <Select
+          <TextField
+            select
             name='categoryId'
             value={data.categoryId}
             label='Category'
@@ -128,7 +129,7 @@ const TransactionForm = () => {
                 {x.name}
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
           <TextField
             name='amount'
             value={data.amount}

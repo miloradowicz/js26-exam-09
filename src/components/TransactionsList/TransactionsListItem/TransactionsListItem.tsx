@@ -58,9 +58,7 @@ const TransactionsListItem: FC<Props> = ({ transaction }) => {
                   <Typography>{category.name}</Typography>
                 </Grid>
                 <Grid size={2} textAlign='end'>
-                  <Typography
-                    color={category.type === 'expense' ? 'red' : 'green'}
-                  >
+                  <Typography color={transaction.amount < 0 ? 'red' : 'green'}>
                     {transaction.amount} KGS
                   </Typography>
                 </Grid>

@@ -1,6 +1,7 @@
 import { FC, memo } from 'react';
 import { Transaction } from '../../../types';
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -10,28 +11,42 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { useAppSelector } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Selectors as categoriesSelector } from '../../../store/slices/categoriesSlice';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { LoadingButton } from '@mui/lab';
-import { Selectors as transactionsSelector } from '../../../store/slices/transactionsSlice';
+import {
+  openTransactionModal,
+  Selectors as transactionsSelector,
+} from '../../../store/slices/transactionsSlice';
+import { deleteTransaction } from '../../../store/thunks/transactionsThunks';
 
 interface Props {
   transaction: Transaction;
 }
 
 const TransactionsListItem: FC<Props> = ({ transaction }) => {
+  const dispatch = useAppDispatch();
+
   const categories = useAppSelector(categoriesSelector.categories);
   const deleteLoading = useAppSelector(transactionsSelector.deleteLoading);
 
-  const category = categories.find((x) => x.id === transaction.id);
+  const category = categories.find((x) => x.id === transaction.categoryId);
+
+  const handleEdit = () => {
+    dispatch(openTransactionModal(transaction.id));
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteTransaction(transaction.id));
+  };
 
   return (
     category && (
-      <Card>
-        <Grid container>
-          <Grid size={10}>
+      <Card sx={{ px: 1 }} variant='outlined'>
+        <Stack direction='row' justifyContent='space-between'>
+          <Box flex={1}>
             <CardContent>
               <Grid container>
                 <Grid size={3}>
@@ -42,7 +57,7 @@ const TransactionsListItem: FC<Props> = ({ transaction }) => {
                 <Grid size={7}>
                   <Typography>{category.name}</Typography>
                 </Grid>
-                <Grid size={2}>
+                <Grid size={2} textAlign='end'>
                   <Typography
                     color={category.type === 'expense' ? 'red' : 'green'}
                   >
@@ -51,20 +66,21 @@ const TransactionsListItem: FC<Props> = ({ transaction }) => {
                 </Grid>
               </Grid>
             </CardContent>
-          </Grid>
-          <Grid size={2}>
+          </Box>
+          <Stack direction='column'>
             <CardActions>
-              <Stack direction='column'>
-                <Button>
-                  <EditIcon />
-                </Button>
-                <LoadingButton loading={deleteLoading.includes(transaction.id)}>
-                  <DeleteIcon />
-                </LoadingButton>
-              </Stack>
+              <Button onClick={handleEdit}>
+                <EditIcon />
+              </Button>
+              <LoadingButton
+                loading={deleteLoading.includes(transaction.id)}
+                onClick={handleDelete}
+              >
+                <DeleteIcon />
+              </LoadingButton>
             </CardActions>
-          </Grid>
-        </Grid>
+          </Stack>
+        </Stack>
       </Card>
     )
   );

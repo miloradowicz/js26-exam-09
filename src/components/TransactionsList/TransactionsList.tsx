@@ -7,9 +7,9 @@ const TransactionsList = () => {
   const transactions = useAppSelector(Selectors.transactions);
 
   return (
-    <Stack>
+    <Stack gap={1}>
       {transactions.map((x) => (
-        <TransactionsListItem transaction={x} />
+        <TransactionsListItem key={x.id} transaction={x} />
       ))}
     </Stack>
   );

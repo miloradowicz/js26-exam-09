@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 import { Category, CategoryBase } from '../../types';
 import { RootState } from '../../app/store';
-import { deleteTransaction } from './transactionsThunks';
 
 export const syncAllCategories = createAsyncThunk(
   'categories/syncAllCategories',

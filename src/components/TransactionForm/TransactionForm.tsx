@@ -21,6 +21,7 @@ import {
 } from '../../store/thunks/transactionsThunks';
 import dayjs from 'dayjs';
 import { TransactionBase } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 type Data = TransactionBase;
 
@@ -31,6 +32,7 @@ const initialData: Data = {
 };
 
 const TransactionForm = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const currentId = useAppSelector(Selectors.currentId);
@@ -94,8 +96,14 @@ const TransactionForm = () => {
         );
       } else {
         await dispatch(
-          createTransaction({ ...data, createdAt: dayjs().toISOString() })
+          createTransaction({
+            ...data,
+            amount: c?.type === 'expense' ? -data.amount : data.amount,
+            createdAt: dayjs().toISOString(),
+          })
         );
+
+        navigate('/');
       }
     }
 

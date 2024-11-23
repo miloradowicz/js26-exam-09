@@ -16,7 +16,7 @@ const TransactionsTotal = () => {
         variant='h5'
         color={value === 0 ? 'textPrimary' : value > 0 ? 'success' : 'error'}
       >
-        {value}
+        {value} KGS
       </Typography>
     </Stack>
   );

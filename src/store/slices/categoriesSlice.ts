@@ -41,6 +41,9 @@ const slice = createSlice({
     closeCategoryModal: (state) => {
       state.modalOpen = false;
     },
+    clearError: (state) => {
+      state.error = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -155,7 +158,8 @@ const slice = createSlice({
 });
 
 export const categoriesReducer = slice.reducer;
-export const { openCategoryModal, closeCategoryModal } = slice.actions;
+export const { openCategoryModal, closeCategoryModal, clearError } =
+  slice.actions;
 
 export const Selectors = {
   categories: (state: RootState) => state.categoriesReducer.categories,

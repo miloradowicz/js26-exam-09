@@ -42,7 +42,7 @@ export const deleteCategory = createAsyncThunk.withTypes<{
   const transactions = thunkAPI.getState().transactionsReducer.transactions;
   if (transactions.some((x) => x.categoryId === id)) {
     throw new Error(
-      'Cannot delete category. There are transactions in this category. Assigne them to another category first.'
+      'Cannot delete category. There are transactions in this category. Assign them to another category first.'
     );
   }
 

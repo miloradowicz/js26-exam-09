@@ -5,15 +5,7 @@ import {
   Selectors,
 } from '../../store/slices/categoriesSlice';
 import { CategoryBase } from '../../types';
-import {
-  Select,
-  MenuItem,
-  TextField,
-  Button,
-  SelectChangeEvent,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { MenuItem, TextField, Button, Stack, Typography } from '@mui/material';
 import {
   createCategory,
   updateCategory,

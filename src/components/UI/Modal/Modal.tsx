@@ -3,11 +3,12 @@ import { FC, PropsWithChildren } from 'react';
 
 interface Props {
   open: boolean;
+  onClose?: (_: Event, reason: 'backdropClick' | 'escapeKeyDown') => void;
 }
 
-const UIModal: FC<PropsWithChildren<Props>> = ({ open, children }) => {
+const UIModal: FC<PropsWithChildren<Props>> = ({ open, onClose, children }) => {
   return (
-    <Modal open={open} onClose={}>
+    <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           display: 'flex',

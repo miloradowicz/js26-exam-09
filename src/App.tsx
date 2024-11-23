@@ -3,8 +3,14 @@ import Transactions from './containers/Transactions/Transactions';
 import Categories from './containers/Categories/Categories';
 import Layout from './components/Layout/Layout';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { Selectors as selectTransactions } from './store/slices/transactionsSlice';
-import { Selectors as selectCategories } from './store/slices/categoriesSlice';
+import {
+  closeTransactionModal,
+  Selectors as selectTransactions,
+} from './store/slices/transactionsSlice';
+import {
+  closeCategoryModal,
+  Selectors as selectCategories,
+} from './store/slices/categoriesSlice';
 import Modal from './components/UI/Modal/Modal';
 import CategoriesForm from './components/CategoriesForm/CategoriesForm';
 import TransactionForm from './components/TransactionForm/TransactionForm';
@@ -31,10 +37,16 @@ function App() {
           <Route path='categories' element={<Categories />} />
         </Route>
       </Routes>
-      <Modal open={transactionsModalOpen}>
+      <Modal
+        open={transactionsModalOpen}
+        onClose={() => dispatch(closeTransactionModal())}
+      >
         <TransactionForm />
       </Modal>
-      <Modal open={categoriesModalOpen}>
+      <Modal
+        open={categoriesModalOpen}
+        onClose={() => dispatch(closeCategoryModal())}
+      >
         <CategoriesForm />
       </Modal>
     </Layout>
